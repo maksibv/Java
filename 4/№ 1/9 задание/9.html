@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документ</title>
+    <style>
+        progress {
+            width: 300px;
+            height: 30px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <progress id="progressBar" value="0" max="100"></progress>
+    <br>
+    <button onclick="
+        const progressBar = document.getElementById('progressBar');
+        let currentValue = parseInt(progressBar.value);
+        if (currentValue < 100) {
+            progressBar.value = Math.min(currentValue + 5, 100);
+        }
+    ">Add 5 percent</button>
+</body>
+</html>

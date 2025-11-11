@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документ</title>
+    <style>
+
+        label, input {
+            display: inline-block;
+            width: 7em;
+        }
+        label {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+<h1>Time Converter</h1>
+<div>
+    <label for="days">Days: </label>
+    <input type="text" id="days">
+    <input id="daysBtn" type="button" value="Convert">
+</div>
+<div>
+    <label for="hours">Hours: </label>
+    <input type="text" id="hours">
+    <input id="hoursBtn" type="button" value="Convert">
+    </div>
+<div>
+    <label for="minutes">Minutes: </label>
+    <input type="text" id="minutes">
+    <input id="minutesBtn" type="button" value="Convert">
+</div>
+<div>
+    <label for="seconds">Seconds: </label>
+    <input type="text" id="seconds">
+    <input id="secondsBtn" type="button" value="Convert">
+</div>
+
+<script>
+document.getElementById('daysBtn').addEventListener('click', function() {
+    const days = parseFloat(document.getElementById('days').value);
+    if (!isNaN(days)) {
+        document.getElementById('hours').value = days * 24;
+        document.getElementById('minutes').value = days * 1440;
+        document.getElementById('seconds').value = days * 86400;
+    }
+});
+
+document.getElementById('hoursBtn').addEventListener('click', function() {
+    const hours = parseFloat(document.getElementById('hours').value);
+    if (!isNaN(hours)) {
+        document.getElementById('days').value = hours / 24;
+        document.getElementById('minutes').value = hours * 60;
+        document.getElementById('seconds').value = hours * 3600;
+    }
+});
+
+document.getElementById('minutesBtn').addEventListener('click', function() {
+    const minutes = parseFloat(document.getElementById('minutes').value);
+    if (!isNaN(minutes)) {
+        document.getElementById('days').value = minutes / 1440;
+        document.getElementById('hours').value = minutes / 60;
+        document.getElementById('seconds').value = minutes * 60;
+    }
+});
+
+document.getElementById('secondsBtn').addEventListener('click', function() {
+    const seconds = parseFloat(document.getElementById('seconds').value);
+    if (!isNaN(seconds)) {
+        document.getElementById('days').value = seconds / 86400;
+        document.getElementById('hours').value = seconds / 3600;
+        document.getElementById('minutes').value = seconds / 60;
+    }
+});
+</script>
+</body>
+</html>

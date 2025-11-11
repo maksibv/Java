@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        input, button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input[type="number"] {
+            width: 120px;
+        }
+        button {
+            background-color: #00BFFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0000FF;
+        }
+        button.reset {
+            background-color: #f44336;
+        }
+        button.reset:hover {
+            background-color: #d32f2f;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Таблица клиентов</h1>
+    
+    <div class="controls">
+        <label for="ageInput">Максимальный возраст:</label>
+        <input type="number" id="ageInput" min="0" max="150" value="30">
+        <button id="filterBtn">Удалить клиентов старше</button>
+        
+        <div class="checkbox-group">
+            <input type="checkbox" id="marriedCheckbox">
+            <label for="marriedCheckbox">Только состоящие в браке</label>
+        </div>
+        
+        <button id="resetBtn" class="reset">Сбросить</button>
+    </div>
+    
+    <table id="customerTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Пол</th>
+                <th>Женат/Замужем</th>
+                <th>Возраст</th>
+                <th>Расходы</th>
+                <th>Покупки</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+</div>
+
+<script>
+    let customers = [
+        {
+            'id': 1,
+            'f_name': 'Abby',
+            'l_name': 'Thomas',
+            'gender': 'M',
+            'married': true,
+            'age': 32,
+            'expense': 500,
+            'purchased': ['Shampoo', 'Toys', 'Book']
+        },
+        {
+            'id': 2,
+            'f_name': 'Jerry',
+            'l_name': 'Tom',
+            'gender': 'M',
+            'married': true,
+            'age': 64,
+            'expense': 100,
+            'purchased': ['Stick', 'Blade']
+        },
+        {
+            'id': 3,
+            'f_name': 'Dianna',
+            'l_name': 'Cherry',
+            'gender': 'F',
+            'married': true,
+            'age': 22,
+            'expense': 1500,
+            'purchased': ['Lipstik', 'Nail Polish', 'Bag', 'Book']
+        },
+        {
+            'id': 4,
+            'f_name': 'Dev',
+            'l_name': 'Currian',
+            'gender': 'M',
+            'married': true,
+            'age': 82,
+            'expense': 90,
+            'purchased': ['Book']
+        },
+        {
+            'id': 5,
+            'f_name': 'Maria',
+            'l_name': 'Gomes',
+            'gender': 'F',
+            'married': false,
+            'age': 7,
+            'expense': 300,
+            'purchased': ['Toys']
+        }
+    ];
+
+    let originalCustomers = [...customers];
+
+    const tableBody = document.getElementById('tableBody');
+    const filterBtn = document.getElementById('filterBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const ageInput = document.getElementById('ageInput');
+    const marriedCheckbox = document.getElementById('marriedCheckbox');
+
+    function renderTable(customersArray) {
+        tableBody.innerHTML = '';
+        
+        customersArray.forEach(customer => {
+            const row = document.createElement('tr');
+            
+            const gender = customer.gender === 'M' ? 'Мужской' : 'Женский';
+            const married = customer.married ? 'Да' : 'Нет';
+            const purchased = customer.purchased.join(', ');
+            
+            row.innerHTML = `
+                <td>${customer.id}</td>
+                <td>${customer.f_name}</td>
+                <td>${customer.l_name}</td>
+                <td>${gender}</td>
+                <td>${married}</td>
+                <td>${customer.age}</td>
+                <td>${customer.expense}</td>
+                <td>${purchased}</td>
+            `;
+            
+            tableBody.appendChild(row);
+        });
+    }
+
+    function filterCustomers() {
+        const maxAge = parseInt(ageInput.value);
+        
+        customers = customers.filter(customer => customer.age < maxAge);
+        
+        renderTable(customers);
+    }
+
+    function filterMarriedCustomers() {
+        if (marriedCheckbox.checked) {
+            const marriedCustomers = customers.filter(customer => customer.married);
+            renderTable(marriedCustomers);
+        } else {
+            renderTable(customers);
+        }
+    }
+
+    function resetTable() {
+        customers = [...originalCustomers];
+        ageInput.value = '30';
+        marriedCheckbox.checked = false;
+        renderTable(customers);
+    }
+
+    filterBtn.addEventListener('click', filterCustomers);
+    resetBtn.addEventListener('click', resetTable);
+    marriedCheckbox.addEventListener('change', filterMarriedCustomers);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderTable(customers);
+    });
+</script>
+</body>
+</html>
