@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Настройка продукта</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .error {
+            color: red;
+            margin-top: 5px;
+        }
+
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 8px 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Настройка продукта</h2>
+
+<form id="productForm">
+    <!-- Имя продукта -->
+    <label>
+        Имя продукта:
+        <input type="text" id="productName">
+    </label>
+
+    <!-- Базовые опции -->
+    <p>Базовые опции (выберите минимум одну):</p>
+    <label>
+        <input type="checkbox" name="baseOption" value="A"> Опция A
+    </label>
+    <label>
+        <input type="checkbox" name="baseOption" value="B"> Опция B
+    </label>
+    <label>
+        <input type="checkbox" name="baseOption" value="C"> Опция C
+    </label>
+
+    <!-- Premium -->
+    <p>
+        <label>
+            <input type="checkbox" id="premium"> Premium
+        </label>
+    </p>
+
+    <!-- Количество -->
+    <label>
+        Количество:
+        <input type="text" id="quantity">
+    </label>
+
+    <div id="error" class="error"></div>
+
+    <button type="submit">Продолжить</button>
+</form>
+
+<script>
+    document.getElementById("productForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const productName = document.getElementById("productName").value.trim();
+        const quantity = document.getElementById("quantity").value.trim();
+        const premium = document.getElementById("premium").checked;
+        const baseOptions = document.querySelectorAll('input[name="baseOption"]:checked');
+        const errorDiv = document.getElementById("error");
+
+        errorDiv.textContent = "";
+
+        // Валидация имени
+        if (productName.length < 3) {
+            errorDiv.textContent = "Имя продукта должно содержать минимум 3 символа.";
+            return;
+        }
+
+        // Валидация количества
+        const qty = Number(quantity);
+        if (!Number.isInteger(qty) || qty < 1 || qty > 99) {
+            errorDiv.textContent = "Количество должно быть числом от 1 до 99.";
+            return;
+        }
+
+        // Минимум 1 базовая опция
+        if (baseOptions.length === 0) {
+            errorDiv.textContent = "Необходимо выбрать минимум одну базовую опцию.";
+            return;
+        }
+
+        // Логическая зависимость Premium → Опция A
+        if (premium) {
+            const hasOptionA = Array.from(baseOptions).some(opt => opt.value === "A");
+            if (!hasOptionA) {
+                errorDiv.textContent = "Для Premium обязательно должна быть выбрана Опция A.";
+                return;
+            }
+        }
+
+        // Количество выбранных опций
+        let selectedOptionsCount = baseOptions.length + (premium ? 1 : 0);
+
+        // Редирект с GET-параметрами
+        const params = new URLSearchParams({
+            productName: productName,
+            quantity: qty,
+            selectedOptions: selectedOptionsCount
+        });
+
+        window.location.href = "summary.html?" + params.toString();
+    });
+</script>
+
+</body>
+</html>
